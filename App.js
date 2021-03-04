@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, Button, ScrollView } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button, FlatList, Pressable } from 'react-native';
 
 const ItemTextInput = (props) => {
     return (
@@ -12,21 +12,36 @@ const ItemTextInput = (props) => {
 }
 
 const ListItem = (props) => {
+    let textStyle = [styles.listItem];
+    if (props.status) {
+        textStyle.push(styles.listItemCrossed);
+    }
     return (
-        <Text style={styles.listItem}>{props.itemText}</Text>
+        <Pressable onPress={() => props.itemPressHandler(props.idx)}>
+            <Text style={textStyle}>{props.itemText}</Text>
+        </Pressable>
     );
 }
 
 export default function App() {
     const [inputText, setInputText] = useState("");
     const [items, setItems] = useState([]);
+    const [itemDoneStatuses, setItemDoneStatuses] = useState([]);  // true/false depending on whether it is done or not
 
     const changeTextHandler = (text) => {
         setInputText(text);
     };
 
     const addItemHandler = () => {
-        setItems(items => [...items, inputText]);
+        const newKey = items.length + 1;
+        setItems(items => [...items, { key: newKey.toString(), value: inputText }]);
+        setItemDoneStatuses(items => [...itemDoneStatuses, false]);
+    };
+
+    const itemPressHandler = (idx) => {
+        const itemDoneStatusesUpdated = itemDoneStatuses.slice();
+        itemDoneStatusesUpdated[idx] = !itemDoneStatusesUpdated[idx];
+        setItemDoneStatuses(itemDoneStatuses => itemDoneStatusesUpdated);
     };
 
     return (
@@ -36,9 +51,13 @@ export default function App() {
                 <Button title="ADD" onPress={addItemHandler} />
             </View>
 
-            <ScrollView>
-                {items.map((item, idx) => <ListItem key={idx} itemText={item} />)}
-            </ScrollView>
+            <FlatList data={items} renderItem={itemData => (
+                <ListItem
+                    idx={itemData.index}
+                    itemText={itemData.item.value}
+                    status={itemDoneStatuses[itemData.index]}
+                    itemPressHandler={itemPressHandler} />
+            )} />
         </View>
     );
 }
@@ -66,5 +85,10 @@ const styles = StyleSheet.create({
     listItem: {
         paddingHorizontal: 15,
         marginVertical: 7,
+        color: "black"
+    },
+    listItemCrossed: {
+        textDecorationLine: "line-through",
+        color: "grey",
     }
 });
