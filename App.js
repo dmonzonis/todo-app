@@ -1,38 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, Button, FlatList, Pressable } from 'react-native';
-
-const ItemTextInput = (props) => {
-    return (
-        <View style={styles.itemTextInputArea}>
-            <TextInput style={styles.itemTextInput}
-                placeholder="Enter text here"
-                onChangeText={props.changeTextHandler} />
-        </View>
-    );
-}
-
-const ListItem = (props) => {
-    let textStyle = [styles.listItem];
-    if (props.status) {
-        textStyle.push(styles.listItemCrossed);
-    }
-    return (
-        <Pressable onPress={() => props.itemPressHandler(props.idx)}>
-            <Text style={textStyle}>{props.itemText}</Text>
-        </Pressable>
-    );
-}
+import { StyleSheet, View, Button, FlatList } from 'react-native';
+import ItemTextInput from "./components/ItemTextInput"
+import ListItem from "./components/ListItem"
 
 export default function App() {
-    const [inputText, setInputText] = useState("");
     const [items, setItems] = useState([]);
     const [itemDoneStatuses, setItemDoneStatuses] = useState([]);  // true/false depending on whether it is done or not
 
-    const changeTextHandler = (text) => {
-        setInputText(text);
-    };
+    
 
-    const addItemHandler = () => {
+    const addItemHandler = (inputText) => {
         const newKey = items.length + 1;
         setItems(items => [...items, { key: newKey.toString(), value: inputText }]);
         setItemDoneStatuses(items => [...itemDoneStatuses, false]);
@@ -46,10 +23,7 @@ export default function App() {
 
     return (
         <View style={styles.root}>
-            <View style={styles.inputArea}>
-                <ItemTextInput changeTextHandler={changeTextHandler} />
-                <Button title="ADD" onPress={addItemHandler} />
-            </View>
+            <ItemTextInput onAddItem={addItemHandler} />
 
             <FlatList data={items} renderItem={itemData => (
                 <ListItem
@@ -67,28 +41,4 @@ const styles = StyleSheet.create({
         paddingTop: 60,
         paddingHorizontal: 20,
     },
-    inputArea: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        alignContent: "center",
-        marginBottom: 20,
-    },
-    itemTextInputArea: {
-        width: "80%",
-        borderColor: "black",
-        borderWidth: 1,
-        borderRadius: 5,
-    },
-    itemTextInput: {
-        marginHorizontal: 10,
-    },
-    listItem: {
-        paddingHorizontal: 15,
-        marginVertical: 7,
-        color: "black"
-    },
-    listItemCrossed: {
-        textDecorationLine: "line-through",
-        color: "grey",
-    }
 });
