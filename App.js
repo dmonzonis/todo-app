@@ -5,32 +5,34 @@ import ListItem from "./components/ListItem"
 
 export default function App() {
     const [items, setItems] = useState([]);
-    const [itemDoneStatuses, setItemDoneStatuses] = useState([]);  // true/false depending on whether it is done or not
+    const [idCounter, setIdCounter] = useState(0);
 
-    
-
-    const addItemHandler = (inputText) => {
-        const newKey = items.length + 1;
-        setItems(items => [...items, { key: newKey.toString(), value: inputText }]);
-        setItemDoneStatuses(items => [...itemDoneStatuses, false]);
+    const addNewItem = (inputText) => {
+        setItems(items => [...items, { key: idCounter.toString(), value: inputText, done: false }]);
+        setIdCounter(idCounter + 1);
     };
 
-    const itemPressHandler = (idx) => {
-        const itemDoneStatusesUpdated = itemDoneStatuses.slice();
-        itemDoneStatusesUpdated[idx] = !itemDoneStatusesUpdated[idx];
-        setItemDoneStatuses(itemDoneStatuses => itemDoneStatusesUpdated);
+    const toggleItemStatus = (id) => {
+        const itemsUpdated = items.slice();
+        itemsUpdated[id].done = !itemsUpdated[id].done;
+        setItems(items => itemsUpdated);
+    };
+
+    const removeItem = (id) => {
+        setItems(items => items.filter(item => item.key !== id));
     };
 
     return (
         <View style={styles.root}>
-            <ItemTextInput onAddItem={addItemHandler} />
+            <ItemTextInput onAddItem={addNewItem} />
 
             <FlatList data={items} renderItem={itemData => (
                 <ListItem
-                    idx={itemData.index}
+                    id={itemData.item.key}
                     itemText={itemData.item.value}
-                    status={itemDoneStatuses[itemData.index]}
-                    itemPressHandler={itemPressHandler} />
+                    status={itemData.item.done}
+                    onItemPress={toggleItemStatus}
+                    onItemLongPress={removeItem} />
             )} />
         </View>
     );

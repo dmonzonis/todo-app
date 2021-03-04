@@ -8,7 +8,9 @@ const ListItem = (props) => {
         textStyle.push(styles.listItemCrossed);
     }
     return (
-        <Pressable onPress={() => props.itemPressHandler(props.idx)}>
+        <Pressable
+            onPress={() => props.onItemPress(props.id)}
+            onLongPress={() => props.onItemLongPress(props.id)}>
             <Text style={textStyle}>{props.itemText}</Text>
         </Pressable>
     );
