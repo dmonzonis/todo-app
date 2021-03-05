@@ -12,7 +12,7 @@ export default function App() {
     const [ready, setReady] = useState(false);
 
     const addNewItem = (inputText) => {
-        setItems(items => [...items, { id: idCounter, value: inputText, done: false }]);
+        setItems(items => [...items, { id: idCounter.toString(), value: inputText, done: false }]);
         setIdCounter(idCounter + 1);
         storeItems(items, idCounter);
     }
@@ -27,8 +27,9 @@ export default function App() {
     }
 
     const removeItem = (id) => {
-        setItems(items => items.filter(item => item.id !== id));
-        storeItems(items, idCounter);
+        const itemsFiltered = items.slice().filter(item => item.id !== id);
+        setItems(itemsFiltered);
+        storeItems(itemsFiltered, idCounter);
     }
 
     if (!ready) {
