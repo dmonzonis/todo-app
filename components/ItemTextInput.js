@@ -3,9 +3,11 @@ import { Button, TextInput, StyleSheet, View } from 'react-native';
 
 const ItemTextInput = (props) => {
     const [inputText, setInputText] = useState("");
+    const [buttonEnabled, setButtonEnabled] = useState(false);
 
     const changeTextHandler = (text) => {
         setInputText(text);
+        setButtonEnabled(text !== "");
     };
 
     return (
@@ -15,7 +17,10 @@ const ItemTextInput = (props) => {
                     placeholder="Enter text here"
                     onChangeText={changeTextHandler} />
             </View>
-            <Button title="ADD" onPress={() => props.onAddItem(inputText)} />
+            <Button
+                title="ADD"
+                onPress={() => props.onAddItem(inputText)}
+                disabled={!buttonEnabled} />
         </View>
     );
 }
