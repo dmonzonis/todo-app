@@ -12,20 +12,22 @@ export default function App() {
     const [ready, setReady] = useState(false);
 
     const addNewItem = (inputText) => {
-        setItems(items => [...items, { key: idCounter.toString(), value: inputText, done: false }]);
+        setItems(items => [...items, { id: idCounter, value: inputText, done: false }]);
         setIdCounter(idCounter + 1);
         storeItems(items, idCounter);
     }
 
     const toggleItemStatus = (id) => {
         const itemsUpdated = items.slice();
-        itemsUpdated[id].done = !itemsUpdated[id].done;
+        itemsUpdated.map((item) => {
+            if (item.id === id) item.done = !item.done;
+        });
         setItems(items => itemsUpdated);
         storeItems(items, idCounter);
     }
 
     const removeItem = (id) => {
-        setItems(items => items.filter(item => item.key !== id));
+        setItems(items => items.filter(item => item.id !== id));
         storeItems(items, idCounter);
     }
 
@@ -48,7 +50,7 @@ export default function App() {
 
             <FlatList data={items} renderItem={itemData => (
                 <ListItem
-                    id={itemData.item.key}
+                    id={itemData.item.id}
                     itemText={itemData.item.value}
                     status={itemData.item.done}
                     onItemPress={toggleItemStatus}
