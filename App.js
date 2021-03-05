@@ -1,26 +1,46 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Button, FlatList } from 'react-native';
+import { StyleSheet, View, Text, FlatList } from 'react-native';
+
 import ItemTextInput from "./components/ItemTextInput"
 import ListItem from "./components/ListItem"
+
+import { storeItems, retrieveItems } from "./utils/Storage"
 
 export default function App() {
     const [items, setItems] = useState([]);
     const [idCounter, setIdCounter] = useState(0);
+    const [ready, setReady] = useState(false);
 
     const addNewItem = (inputText) => {
         setItems(items => [...items, { key: idCounter.toString(), value: inputText, done: false }]);
         setIdCounter(idCounter + 1);
-    };
+        storeItems(items, idCounter);
+    }
 
     const toggleItemStatus = (id) => {
         const itemsUpdated = items.slice();
         itemsUpdated[id].done = !itemsUpdated[id].done;
         setItems(items => itemsUpdated);
-    };
+        storeItems(items, idCounter);
+    }
 
     const removeItem = (id) => {
         setItems(items => items.filter(item => item.key !== id));
-    };
+        storeItems(items, idCounter);
+    }
+
+    if (!ready) {
+        retrieveItems().then((loadedData) => {
+            setIdCounter(loadedData.idCounter);
+            setItems(loadedData.items);
+            setReady(true);
+        });
+        return (
+            <View style={styles.loadingRoot}>
+                <Text style={styles.loadingText}>Loading...</Text>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.root}>
@@ -43,4 +63,11 @@ const styles = StyleSheet.create({
         paddingTop: 60,
         paddingHorizontal: 20,
     },
+    loadingRoot: {
+        flex: 1,
+        justifyContent: "center",
+    },
+    loadingText: {
+        alignSelf: "center",
+    }
 });

@@ -14,7 +14,7 @@ const ListItem = (props) => {
             <Text style={textStyle}>{props.itemText}</Text>
         </Pressable>
     );
-};
+}
 
 const styles = StyleSheet.create({
     listItem: {

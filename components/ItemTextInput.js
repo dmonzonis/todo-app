@@ -18,7 +18,7 @@ const ItemTextInput = (props) => {
             <Button title="ADD" onPress={() => props.onAddItem(inputText)} />
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     inputArea: {
